@@ -1,7 +1,7 @@
 {
-  "name": "react-free-draggable",
+  "name": "react-sticky-wrapper",
   "version": "1.0.0",
-  "description": "transform实现的自由拖拽组件",
+  "description": "Easy to use Fixed Top assembly（好用的滚动吸顶组件）",
   "main": "lib/bundle.js",
   "repository": "https://github.com/mezhanglei",
   "files": [
@@ -19,9 +19,8 @@
     "css-fix": "stylelint src/**/*.{css,scss,less} --fix"
   },
   "keywords": [
-    "react-draggable",
-    "react-free-draggable",
-    "react-drag"
+    "react-sticky",
+    "react-sticky-wrapper"
   ],
   "author": "zhanglei",
   "license": "MIT",
