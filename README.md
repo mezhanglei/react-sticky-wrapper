@@ -9,6 +9,7 @@ English | [中文说明](./README_CN.md)
 `ReactFixedSticky` Component: Using `position:fixed` to realize sticky to top, only support the top of the wrapped element, but pay attention to the fixed position on the `position: absolute | relative` element.
 
 `ReactTransformSticky` Component: Using `transform` rolling to realize any element that needs to fixed, one or more top lifting element selectors can be customized, with high degree of freedom, but the disadvantage is that there will be shake when fast rolling, so the general scene chooses `ReactFixedSticky` component, but when one or more top lifting elements need to be customized, you should use `ReactTransformSticky` component.
+the two components all support mobile and pc。
 
 # ReactFixedSticky Component
 
