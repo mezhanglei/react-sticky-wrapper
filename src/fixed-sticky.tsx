@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, CSSProperties } from 'react';
-import { addEvent, findElement, removeEvent, getClientXY, getScrollParent, getScroll, getPositionInParent, setStyle } from './utils/dom';
+import { addEvent, findElement, removeEvent, getClientXY, getScrollParent, getScroll, getPositionInParent, setStyle, getOffsetWH } from './utils/dom';
 import { isMobile } from './utils/verify';
 import classNames from 'classnames';
 import ReactDOM from 'react-dom';
@@ -63,10 +63,13 @@ const ReactFixedSticky: React.FC<ReactFixedStickyProps> = (props) => {
         const ownerDocument = findOwnerDocument();
         const parent = findParent();
         draggerRef.current = ownerDocument.createElement('div');
+        const offsetWH = getOffsetWH(nodeRef.current);
         setStyle({
             opacity: 0,
             zIndex: -1,
-            position: 'fixed'
+            position: 'fixed',
+            width: `${offsetWH?.width || 0}px`,
+            height: `${offsetWH?.height || 0}px`
         }, draggerRef.current);
         parent?.appendChild(draggerRef.current);
         ReactDOM.render(FixedChild, draggerRef.current);
