@@ -2,7 +2,7 @@
 
 [English](./README.md) | 中文说明
 
-[![Version](https://img.shields.io/badge/version-1.0.1-green)](https://www.npmjs.com/package/react-sticky-wrapper)
+[![Version](https://img.shields.io/badge/version-1.0.2-green)](https://www.npmjs.com/package/react-sticky-wrapper)
 
 # 适用场景
 
@@ -12,7 +12,7 @@ ReactTransformSticky组件：利用`transform`滚动实现的任意吸顶组件�
 
 # ReactFixedSticky组件
 
-- [x] 吸顶元素为包裹的子元素（props.children）
+- [x] 吸顶元素为包裹的单个子元素（props.children）
 - [x] `scrollRoot`: 自定义滚动根节点，默认滚动根节点为body
 - [x] `topDistance`:自定义吸顶元素到滚动根节点之间的距离，单位px
 
