@@ -50,7 +50,7 @@ import { ReactFixedSticky, ReactTransformSticky } from 'react-sticky-wrapper';
 
 | 名称                          | 类型                  | 默认值                                                         | 描述                                                                                                      |
 | ----------------------------- | --------------------- | -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| scrollRoot                      | `string / HTMLElement`            | `document.body / document.documentElement`                                                  | 吸顶时的滚动根元素，默认`document.body / document.documentElement`                                                                                  |
+| scrollRoot                      | `string / HTMLElement`            | -                                                  | 吸顶时的滚动根元素，默认自动寻找最近的滚动根元素                                                                                  |
 | topDistance                  | `number`            | `0`                                                  | 设置离滚动根元素多少时吸顶，默认0，单位`px  `                                                                              |
 
 ## ReactTransformSticky组件属性说明
