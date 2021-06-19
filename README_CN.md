@@ -2,7 +2,7 @@
 
 [English](./README.md) | 中文说明
 
-[![Version](https://img.shields.io/badge/version-1.0.2-green)](https://www.npmjs.com/package/react-sticky-wrapper)
+[![Version](https://img.shields.io/badge/version-1.0.3-green)](https://www.npmjs.com/package/react-sticky-wrapper)
 
 # 适用场景
 
