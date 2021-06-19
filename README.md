@@ -14,14 +14,14 @@ the two components all support mobile and pc。
 # ReactFixedSticky Component
 
 - [x] Default top fixed element are `props.children`;
-- [x] `scrollRoot` : Custom scrollRoot, default scrollRoot is body
+- [x] `scrollRoot` : Custom scrollRoot, default automatically find the scrolling root element
 - [x] `topDistance`: Customize the distance between the top element and the root of the scroll, unit `px`
 
 
 # ReactTransformSticky Component
 
 - [x] Default top fixed element are `props.children`, but you can customize more than one by `targetNodeList`
-- [x] `scrollRoot` : Custom scrollRoot, default scrollRoot is body
+- [x] `scrollRoot` : Custom scrollRoot, default automatically find the scrolling root element
 - [x] `topDistance`: Customize the distance between the top element and the root of the scroll, unit `px`
 
 ### install
@@ -35,13 +35,13 @@ yarn add react-sticky-wrapper
 ```javascript
 import { ReactFixedSticky, ReactTransformSticky } from 'react-sticky-wrapper';
 
-<ReactFixedSticky>
+<ReactFixedSticky scrollRoot={document.body}>
  fixed Sticky
 </ReactFixedSticky>
 
 ...
 
-<ReactTransformSticky>
+<ReactTransformSticky scrollRoot={document.body}>
  transform Sticky
 </ReactTransformSticky>
 
@@ -51,13 +51,13 @@ import { ReactFixedSticky, ReactTransformSticky } from 'react-sticky-wrapper';
 
 | name                          | type                  | defaultValue                                                   | description                                                                                                      |
 | ----------------------------- | --------------------- | -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| scrollRoot                      | `string / HTMLElement`            | `document.body / document.documentElement`                                                  | the root element when scrolling，default `document.body / document.documentElement`                                                                                  |
+| scrollRoot                      | `string / HTMLElement`            | -                                                  | the root element when scrolling，default automatically find the scrolling root element                                                                                  |
 | topDistance                  | `number`            | `0`                                                  | the distance to scrolling root element when fixed，default `0`，unit `px` `                                                                              |
 
 ## ReactTransformSticky Attributes
 
 | name                          | type                  | defaultValue                                                   | description                                                                                                      |
 | ----------------------------- | --------------------- | -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| scrollRoot                      | `string / HTMLElement`            | `document.body`                                                  | the root element when scrolling，default `document.body / document.documentElement`                                                                                  |
+| scrollRoot                      | `string / HTMLElement`            | -                                                  | the root element when scrolling，default automatically find the scrolling root element                                                                                  |
 | topDistance                  | `number`            | `0`                                                  | the distance to scrolling root element when fixed，default `0`，unit `px`                                                                              |
 | targetNodeList          | `HTMLElement[] / string[]`                         | `props.children`                                                  | element that need to fixed，default `props.children`                                                  |

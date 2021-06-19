@@ -13,13 +13,13 @@ ReactTransformSticky组件：利用`transform`滚动实现的任意吸顶组件�
 # ReactFixedSticky组件
 
 - [x] 吸顶元素为包裹的单个子元素（props.children）
-- [x] `scrollRoot`: 自定义滚动根节点，默认滚动根节点为body
+- [x] `scrollRoot`: 自定义滚动根节点，默认自动寻找滚动根元素。
 - [x] `topDistance`:自定义吸顶元素到滚动根节点之间的距离，单位px
 
 # ReactTransformSticky组件
 
 - [x] 默认吸顶元素为包裹的子元素（props.children），也可以自定义多个
-- [x] `scrollRoot`: 自定义滚动根节点，默认滚动根节点为body
+- [x] `scrollRoot`: 自定义滚动根节点，默认自动寻找滚动根元素
 - [x] `topDistance`:自定义吸顶元素到滚动根节点之间的距离，单位px
 - [x] `targetNodeList`: 自定义目标吸顶元素，可以自定义一个或多个
 
@@ -34,13 +34,13 @@ yarn add react-sticky-wrapper
 ```javascript
 import { ReactFixedSticky, ReactTransformSticky } from 'react-sticky-wrapper';
 
-<ReactFixedSticky>
+<ReactFixedSticky scrollRoot={document.body}>
  fixed Sticky
 </ReactFixedSticky>
 
 ...
 
-<ReactTransformSticky>
+<ReactTransformSticky scrollRoot={document.body}>
  transform Sticky
 </ReactTransformSticky>
 
@@ -57,7 +57,7 @@ import { ReactFixedSticky, ReactTransformSticky } from 'react-sticky-wrapper';
 
 | 名称                          | 类型                  | 默认值                                                         | 描述                                                                                                      |
 | ----------------------------- | --------------------- | -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| scrollRoot                      | `string / HTMLElement`            | `document.body / document.documentElement`                                                  | 吸顶时的滚动根元素，默认`document.body / document.documentElement`                                                                                  |
+| scrollRoot                      | `string / HTMLElement`            | -                                                  | 吸顶时的滚动根元素，默认自动寻找最近的滚动根元素                                                                                  |
 | topDistance                  | `number`            | `0`                                                  | 设置离滚动根元素多少时吸顶，默认0，单位`px`                                                                              |
 | targetNodeList          | `HTMLElement[] / string[]`                         | `props.children`                                                  | 设置需要吸顶的dom元素集合，默认`props.children`                                                  |
 # TODO-LIST
