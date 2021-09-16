@@ -36,39 +36,10 @@ export function getClientXY(el: MouseEvent | TouchEvent | HTMLElement): null | S
         }
     } else if (isDom(el)) {
         pos = {
-            x: el.getBoundingClientRect().left,
-            y: el.getBoundingClientRect().top
+            x: getRect(el).left,
+            y: getRect(el).top
         };
     }
-    return pos;
-}
-
-/**
- * 返回元素或事件对象相对于父元素的真实位置
- * @param el 元素或事件对象
- * @param parent 父元素
- */
- export function getPositionInParent(el: MouseEvent | TouchEvent | HTMLElement, parent: HTMLElement): null | SizeInterface {
-    let pos = null;
-    if ("clientX" in el) {
-        pos = {
-            x: el?.clientX - parent.getBoundingClientRect().left,
-            y: el?.clientY - parent.getBoundingClientRect().top
-        };
-    } else if ("touches" in el) {
-        if (el?.touches[0]) {
-            pos = {
-                x: el?.touches[0]?.clientX - parent.getBoundingClientRect().left,
-                y: el?.touches[0]?.clientY - parent.getBoundingClientRect().top
-            };
-        }
-    } else if (isDom(el)) {
-        pos = {
-            x: el.getBoundingClientRect().left - parent.getBoundingClientRect().left,
-            y: el.getBoundingClientRect().top - parent.getBoundingClientRect().top
-        };
-    }
-
     return pos;
 }
 
@@ -129,11 +100,11 @@ export function getScrollParent(target: any, step?: number): HTMLElement {
     x: number;
     y: number;
 }
-export function getScroll(el: HTMLElement = (document.body || document.documentElement)): undefined | ScrollInterface {
+export function getScroll(el: HTMLElement): undefined | ScrollInterface {
     if (!isDom(el)) {
         return;
     }
-    if (el === document.body || el === document.documentElement) {
+    if ([document.documentElement, document.body].includes(el)) {
         const doc = el.ownerDocument; // 节点所在document对象
         const win: any = doc.defaultView; // 包含document的window对象
         const x = doc.documentElement.scrollLeft || win.pageXOffset || doc.body.scrollLeft;
@@ -151,11 +122,11 @@ export interface OffsetInterface {
     width: number;
     height: number;
 }
-export function getOffsetWH(el: HTMLElement = (document.body || document.documentElement)): undefined | OffsetInterface {
+export function getOffsetWH(el: HTMLElement): undefined | OffsetInterface {
     if (!isDom(el)) {
         return;
     }
-    if (el === document.body || el === document.documentElement) {
+    if ([document.documentElement, document.body].includes(el)) {
         const width = window.innerWidth;
         const height = window.innerHeight;
         return { width, height };
@@ -186,6 +157,63 @@ export function getOffsetWH(el: HTMLElement = (document.body || document.documen
     });
 
     return oldStyle;
+}
+
+// 获取页面或元素的可视宽高(兼容写法, 不包括工具栏和滚动条及边框)
+export interface ClientInterface {
+    width: number;
+    height: number;
+}
+export function getClientWH(el: HTMLElement): undefined | ClientInterface {
+    if (!isDom(el)) {
+        return;
+    }
+    if ([document.documentElement, document.body].includes(el)) {
+        const width = el.clientWidth || window.screen.availWidth;
+        const height = el.clientHeight || window.screen.availHeight;
+        return { width, height };
+    } else {
+        const width = el.clientWidth;
+        const height = el.clientHeight;
+        return { width, height };
+    }
+};
+
+/**
+ * 返回元素的视窗内的位置(document.body,document?.documentElement可视位置随着滚动改变)
+ * @param el 
+ * @returns 
+ */
+ export function getRect(el: HTMLElement) {
+    return el.getBoundingClientRect()
+}
+
+// 距离父元素内边框的范围信息
+export function getInsideRange(el: HTMLElement, parent: HTMLElement): null | {
+    left: number;
+    top: number;
+    right: number;
+    bottom: number;
+} {
+    let pos = null;
+    if (isDom(el)) {
+        const nodeClientX = getClientXY(el)?.x || 0;
+        const nodeClientY = getClientXY(el)?.y || 0;
+        const rootClientX = getClientXY(parent)?.x || 0;
+        const rootClientY = getClientXY(parent)?.y || 0;
+        const parentW = getClientWH(parent)?.width || 0;
+        const parentH = getClientWH(parent)?.height || 0;
+        const nodeW = getOffsetWH(el)?.width || 0;
+        const nodeH = getOffsetWH(el)?.height || 0;
+
+        return {
+            left: nodeClientX - rootClientX,
+            top: nodeClientY - rootClientY,
+            right: parentW - (nodeClientX - rootClientX + nodeW),
+            bottom: parentH - (nodeClientY - rootClientY + nodeH)
+        }
+    }
+    return pos;
 }
 
 /**

@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, CSSProperties } from 'react';
-import { addEvent, findElement, removeEvent, getClientXY, getScrollParent, getScroll, getPositionInParent, setStyle, getOffsetWH } from './utils/dom';
+import { addEvent, findElement, removeEvent, getClientXY, getScrollParent, setStyle, getInsideRange, getRect } from './utils/dom';
 import { isMobile } from './utils/verify';
 import classNames from 'classnames';
 import ReactDOM from 'react-dom';
 
-// 利用fixed实现的吸顶组件
+// 利用fixed实现的吸附固定组件
 // Simple abstraction for dragging events names.
 const eventsFor = {
     touch: {
@@ -21,7 +21,7 @@ let dragEventFor = isMobile() ? eventsFor.touch : eventsFor.mouse;
 export interface ReactFixedStickyProps {
     children: any;
     scrollRoot?: HTMLElement | string; // 滚动根节点
-    topDistance?: number; // 滚动时目标距离滚动根节点哪里开始吸顶
+    bounds?: { left?: number, top?: number }; // 小于设置值则固定
     style?: CSSProperties;
     className?: string;
 }
@@ -30,12 +30,13 @@ const ReactFixedSticky: React.FC<ReactFixedStickyProps> = (props) => {
     const {
         children,
         scrollRoot,
+        bounds = { top: 0 },
         style,
         className
     } = props;
 
     const nodeRef = useRef<any>();
-    const draggerRef = useRef<any>();
+    const stickyRef = useRef<any>();
 
     // 获取滚动根元素
     const getScrollRoot = () => {
@@ -46,7 +47,7 @@ const ReactFixedSticky: React.FC<ReactFixedStickyProps> = (props) => {
     // 位置相对比较的父元素
     const findParent = () => {
         const ownerDocument = document;
-        const node = ownerDocument?.body || ownerDocument?.documentElement;
+        const node = ownerDocument?.documentElement;
         return node;
     };
 
@@ -56,49 +57,59 @@ const ReactFixedSticky: React.FC<ReactFixedStickyProps> = (props) => {
 
     useEffect(() => {
         const root = getScrollRoot();
-        const addEventEle: any = root === (document.body || document.documentElement) ? (document || window) : root;
-        const nodeObj = { node: nodeRef.current, initDistance: (getClientXY(nodeRef.current)?.y || 0) - (getClientXY(root)?.y || 0) + 1 }
-        addEvent(addEventEle, dragEventFor.move, (e) => handleScroll(e, nodeObj, root));
+        const node = nodeRef.current;
+        const addEventEle: any = [document.documentElement, document.body].includes(root) ? (document || window) : root;
+  
+        const initData = {
+            node,
+            root
+        }
+        addEvent(addEventEle, dragEventFor.move, (e) => handleScroll(e, initData));
 
         const ownerDocument = findOwnerDocument();
         const parent = findParent();
-        draggerRef.current = ownerDocument.createElement('div');
+        stickyRef.current = ownerDocument.createElement('div');
         setStyle({
             opacity: 0,
             zIndex: -1,
             position: 'fixed'
-        }, draggerRef.current);
-        parent?.appendChild(draggerRef.current);
-        ReactDOM.render(FixedChild, draggerRef.current);
+        }, stickyRef.current);
+        parent?.appendChild(stickyRef.current);
+        ReactDOM.render(FixedChild, stickyRef.current);
         return () => {
             removeEvent(addEventEle, dragEventFor.move, handleScroll);
-            parent?.removeChild(draggerRef.current);
+            parent?.removeChild(stickyRef.current);
         }
     }, []);
 
-    const handleScroll = (e: MouseEvent | TouchEvent, nodeObj: { node: HTMLElement, initDistance: number }, root: HTMLElement) => {
-        const node = nodeObj?.node;
-        // 距离滚动根节点的初始距离
-        const initDistance = nodeObj?.initDistance;
-        // 距离滚动根节点多少开始吸顶
-        const topDistance = props.topDistance || 0;
-        // 根节点滚动的距离
-        const rootScrollTop = getScroll(root)?.y || 0;
-        // 滚动根节点到屏幕上方的距离
-        const rootPositionY = getPositionInParent(root, findParent())?.y || 0;
-        if (draggerRef.current) {
-            draggerRef.current.style['top'] = rootPositionY + topDistance + 'px';
-            if (rootScrollTop - initDistance < topDistance) {
-                // console.log(rootScrollTop, '上');
-                node.style['opacity'] = '1';
-                draggerRef.current.style['opacity'] = 0;
-                draggerRef.current.style['zIndex'] = -1;
-            } else {
-                // console.log(rootScrollTop, '下');
-                node.style['opacity'] = '0';
-                draggerRef.current.style['opacity'] = 1;
-                draggerRef.current.style['zIndex'] = 999
-            }
+    const handleScroll = (e: MouseEvent | TouchEvent, data: { node: HTMLElement, root: HTMLElement }) => {
+
+        const node = data?.node;
+        const root = data?.root;
+        // 目标在根节点内部的位置范围
+        const isRoot = [document.documentElement, document.body].includes(root);
+        const insideRange = isRoot ? getRect(node) : getInsideRange(node, root);
+        if (!insideRange || !stickyRef.current) return;
+
+        const leftTrigger = bounds?.left || bounds.left === 0 ? insideRange?.left < bounds?.left : false;
+        const topTrigger = bounds?.top || bounds.top === 0 ? insideRange?.top < bounds?.top : false;
+
+        if (leftTrigger || topTrigger) {
+            // 根节点的位置
+            const baseLeft = Math.max(getClientXY(root)?.x || 0, 0);
+            const baseTop = Math.max(getClientXY(root)?.y || 0, 0);
+
+            stickyRef.current.style['top'] = baseTop + (bounds.top || 0) + 'px';
+            stickyRef.current.style['left'] = baseLeft + (bounds.left || 0) + 'px';
+
+            node.style['opacity'] = '0';
+            stickyRef.current.style['opacity'] = 1;
+            stickyRef.current.style['zIndex'] = 0
+
+        } else {
+            node.style['opacity'] = '1';
+            stickyRef.current.style['opacity'] = 0;
+            stickyRef.current.style['zIndex'] = -1;
         }
     }
 
