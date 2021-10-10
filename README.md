@@ -2,7 +2,7 @@
 
 English | [中文说明](./README_CN.md)
 
-[![Version](https://img.shields.io/badge/version-1.1.0-green)](https://www.npmjs.com/package/react-sticky-wrapper)
+[![Version](https://img.shields.io/badge/version-1.1.1-green)](https://www.npmjs.com/package/react-sticky-wrapper)
 
 # ReactFixedSticky Component
   Using `position:fixed` to realize sticky to top, only support the top of the wrapped element, but pay attention to the fixed position on the `position: absolute | relative` element.

@@ -15,12 +15,20 @@ import { CSSProperties } from "react";
     return result;
 };
 
-// 返回元素或事件对象的可视位置
-export interface SizeInterface {
+/**
+ * 返回元素的视窗内的位置
+ * @param el 
+ * @returns 
+ */
+ export function getRect(el: HTMLElement) {
+    return el.getBoundingClientRect()
+}
+
+// 返回元素或事件对象的视口位置
+export function getClientXY(el: MouseEvent | TouchEvent | HTMLElement): null | {
     x: number;
     y: number;
-}
-export function getClientXY(el: MouseEvent | TouchEvent | HTMLElement): null | SizeInterface {
+} {
     let pos = null;
     if ("clientX" in el) {
         pos = {
@@ -35,10 +43,17 @@ export function getClientXY(el: MouseEvent | TouchEvent | HTMLElement): null | S
             };
         }
     } else if (isDom(el)) {
-        pos = {
-            x: getRect(el).left,
-            y: getRect(el).top
-        };
+        if ([document.documentElement, document.body].includes(el)) {
+            pos = {
+                x: 0,
+                y: 0
+            }
+        } else {
+            pos = {
+                x: getRect(el)?.left,
+                y: getRect(el).top
+            };
+        }
     }
     return pos;
 }
@@ -65,8 +80,8 @@ export function getClientXY(el: MouseEvent | TouchEvent | HTMLElement): null | S
  * @param {*} target 目标元素
  * @param {*} step 遍历层数，设置可以限制向上冒泡查找的层数
  */
-export function getScrollParent(target: any, step?: number): HTMLElement {
-    const root = [document.body, document.documentElement];
+ export function getScrollParent(target: any, step?: number): HTMLElement {
+    const root = [document.documentElement, document.body];
     if (root.indexOf(target) > -1) {
         return document.body || document.documentElement;
     };
@@ -96,11 +111,10 @@ export function getScrollParent(target: any, step?: number): HTMLElement {
  * 获取页面或元素的卷曲滚动(兼容写法)
  * @param el 目标元素
  */
- export interface ScrollInterface {
+ export function getScroll(el: HTMLElement): undefined | {
     x: number;
     y: number;
-}
-export function getScroll(el: HTMLElement): undefined | ScrollInterface {
+} {
     if (!isDom(el)) {
         return;
     }
@@ -118,11 +132,10 @@ export function getScroll(el: HTMLElement): undefined | ScrollInterface {
 };
 
 // 获取页面或元素的宽高 = 可视宽高 + 滚动条 + 边框
-export interface OffsetInterface {
+export function getOffsetWH(el: HTMLElement): undefined | {
     width: number;
     height: number;
-}
-export function getOffsetWH(el: HTMLElement): undefined | OffsetInterface {
+} {
     if (!isDom(el)) {
         return;
     }
@@ -136,7 +149,6 @@ export function getOffsetWH(el: HTMLElement): undefined | OffsetInterface {
         return { width, height };
     }
 };
-
 
 /**
  * 给目标节点设置样式,并返回旧样式
@@ -160,11 +172,10 @@ export function getOffsetWH(el: HTMLElement): undefined | OffsetInterface {
 }
 
 // 获取页面或元素的可视宽高(兼容写法, 不包括工具栏和滚动条及边框)
-export interface ClientInterface {
+export function getClientWH(el: HTMLElement): undefined | {
     width: number;
     height: number;
-}
-export function getClientWH(el: HTMLElement): undefined | ClientInterface {
+} {
     if (!isDom(el)) {
         return;
     }
@@ -179,16 +190,7 @@ export function getClientWH(el: HTMLElement): undefined | ClientInterface {
     }
 };
 
-/**
- * 返回元素的视窗内的位置(document.body,document?.documentElement可视位置随着滚动改变)
- * @param el 
- * @returns 
- */
- export function getRect(el: HTMLElement) {
-    return el.getBoundingClientRect()
-}
-
-// 距离父元素内边框的范围信息
+// 目标在父元素四条内边框距离信息
 export function getInsideRange(el: HTMLElement, parent: HTMLElement): null | {
     left: number;
     top: number;
@@ -197,20 +199,19 @@ export function getInsideRange(el: HTMLElement, parent: HTMLElement): null | {
 } {
     let pos = null;
     if (isDom(el)) {
-        const nodeClientX = getClientXY(el)?.x || 0;
-        const nodeClientY = getClientXY(el)?.y || 0;
-        const rootClientX = getClientXY(parent)?.x || 0;
-        const rootClientY = getClientXY(parent)?.y || 0;
-        const parentW = getClientWH(parent)?.width || 0;
-        const parentH = getClientWH(parent)?.height || 0;
+        const parentScrollW = parent?.scrollWidth || 0;
+        const parentScrollH = parent?.scrollHeight || 0;
         const nodeW = getOffsetWH(el)?.width || 0;
         const nodeH = getOffsetWH(el)?.height || 0;
 
+        const top = getRect(el).top - getRect(parent).top;
+        const left = getRect(el).left - getRect(parent).left;
+
         return {
-            left: nodeClientX - rootClientX,
-            top: nodeClientY - rootClientY,
-            right: parentW - (nodeClientX - rootClientX + nodeW),
-            bottom: parentH - (nodeClientY - rootClientY + nodeH)
+            left,
+            top,
+            right: parentScrollW - (left + nodeW),
+            bottom: parentScrollH - (top + nodeH)
         }
     }
     return pos;
@@ -223,12 +224,11 @@ export function getInsideRange(el: HTMLElement, parent: HTMLElement): null | {
  * @param handler 事件函数
  * @param inputOptions 配置
  */
- interface InputOptionsType {
+ export function addEvent(el: any, event: string, handler: (...rest: any[]) => any, inputOptions?: {
     captrue?: boolean,
     once?: boolean,
     passive?: boolean
-}
-export function addEvent(el: any, event: string, handler: (...rest: any[]) => any, inputOptions?: InputOptionsType): void {
+}): void {
     if (!el) return;
     // captrue: true事件捕获 once: true只调用一次,然后销毁 passive: true不调用preventDefault
     const options = { capture: false, once: false, passive: false, ...inputOptions };
@@ -249,7 +249,11 @@ export function addEvent(el: any, event: string, handler: (...rest: any[]) => an
  * @param handler 事件函数
  * @param inputOptions 配置
  */
-export function removeEvent(el: any, event: string, handler: (...rest: any[]) => any, inputOptions?: InputOptionsType): void {
+export function removeEvent(el: any, event: string, handler: (...rest: any[]) => any, inputOptions?: {
+    captrue?: boolean,
+    once?: boolean,
+    passive?: boolean
+}): void {
     if (!el) return;
     const options = { capture: false, once: false, passive: false, ...inputOptions };
     if (el.removeEventListener) {
