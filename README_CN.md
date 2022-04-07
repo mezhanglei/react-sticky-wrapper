@@ -2,7 +2,7 @@
 
 [English](./README.md) | 中文说明
 
-[![Version](https://img.shields.io/badge/version-1.1.1-green)](https://www.npmjs.com/package/react-sticky-wrapper)
+[![Version](https://img.shields.io/badge/version-1.1.2-green)](https://www.npmjs.com/package/react-sticky-wrapper)
 
 # ReactFixedSticky组件
   利用`position:fixed`实现的吸顶组件，只支持被包裹元素的吸顶，注意fixed对要吸顶的元素的定位影响。

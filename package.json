@@ -1,6 +1,6 @@
 {
   "name": "react-sticky-wrapper",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Easy to use Fixed Top assembly（好用的滚动吸顶组件）",
   "main": "lib/bundle.js",
   "types": "./lib/index.d.ts",
