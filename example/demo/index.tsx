@@ -1,6 +1,6 @@
 import React, { Component, useState, useEffect } from 'react';
 import "./index.less";
-import { ReactFixedSticky, ReactTransformSticky } from '../../../src/index';
+import { ReactFixedSticky, ReactTransformSticky } from '../../src/index';
 
 
 const Home: React.FC<any> = (props) => {
