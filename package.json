@@ -1,6 +1,6 @@
 {
   "name": "react-sticky-wrapper",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "description": "Easy to use Fixed Top assembly（好用的滚动吸顶组件）",
   "main": "lib/index.js",
   "types": "./lib/index.d.ts",
@@ -35,6 +35,7 @@
     "@babel/preset-env": "^7.16.11",
     "@babel/preset-react": "^7.16.7",
     "@babel/preset-typescript": "^7.16.7",
+    "@babel/runtime": "^7.20.1",
     "@babel/runtime-corejs3": "^7.17.9",
     "@types/classnames": "^2.2.11",
     "@types/react": "^16.14.21",
