@@ -1,6 +1,6 @@
 {
   "name": "react-sticky-wrapper",
-  "version": "1.1.6",
+  "version": "1.1.7",
   "description": "Easy to use Fixed Top assembly（好用的滚动吸顶组件）",
   "main": "lib/index.js",
   "types": "./lib/index.d.ts",
@@ -89,6 +89,10 @@
     "react-dom": "^16.14.0",
     "react-loadable": "^5.5.0",
     "react-router-dom": "^5.2.0"
+  },
+  "peerDependencies": {
+    "react": ">=16.9.0",
+    "react-dom": ">=16.9.0"
   },
   "browserslist": [
     "defaults",
